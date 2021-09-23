@@ -1,5 +1,14 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+import numpy as np
+import serial as sr
+import time
+
+# global variables
+data = np.array([])
+cond = False
 
 
 def design_window():
@@ -35,6 +44,7 @@ def design_window():
         return
 
     def open_popup():
+        # this is menu popup
         top = tk.Toplevel(root)
         top.geometry("1000x400")
         top.title("Menu")
@@ -95,6 +105,7 @@ def design_window():
         update_button.grid(column=40, row=350)
 
     def open_popup2():
+        # this is end session popup
         p2 = tk.Toplevel(root)
         p2.geometry("750x250")
         p2.title("Session Ended")
@@ -135,8 +146,36 @@ def design_window():
                                  command=p2.destroy)  # change command
         send_button.grid(column=51, row=60)
 
+    def plot_data():
+        global cond, data
+
+        if cond:
+            a = s.readline()
+            a.decode()
+            if len(data) < 100:
+                data = np.append(data, float(a[0:4]))
+            else:
+                data[0:99] = data[1:100]
+                data[99] = float(a[0:4])
+            lines.set_xdata(np.arrange(0, len(data)))
+            lines.set_ydata(data)
+            canvas.draw()
+        root.after(1, plot_data())
+
+    def plot_start():
+        global cond
+        cond = True
+        s.reset_input_buffer()
+
+    def plot_stop():
+        global cond
+        cond = False
+
+    # initialize gui main window
     root = tk.Tk()
     root.title("Mock Patient Interface")
+    root.configure(background='light blue')
+    root.geometry("1200x800")
 
     top_label = ttk.Label(root, text="Welcome!")
     top_label.grid(column=0, row=0, columnspan=2, sticky='w')
@@ -157,12 +196,36 @@ def design_window():
     cancel_button.grid(column=6, row=20)
     menu_button = ttk.Button(root, text="Menu", command=open_popup)
     menu_button.grid(column=2, row=20)
-    start_button = ttk.Button(root, text="Start")  # change command
+    # start_button = ttk.Button(root, text="Start")  # change command
+    # start_button.grid(column=3, row=20)
+    # pause_button = ttk.Button(root, text="Pause")  # change command
+    # pause_button.grid(column=4, row=20)
+
+    fig = Figure()
+    ax = fig.add_subplot(111)
+
+    ax.set_title('Fake Plot')
+    ax.set_xlabel('Time')
+    ax.set_ylabel('Volume in Lungs (mL/kg)')
+    ax.set_xlim(0, 100)
+    ax.set_ylim(0, 6)
+    lines = ax.plot([], [])[0]
+
+    canvas = FigureCanvasTkAgg(fig, master=root)
+    canvas.get_tk_widget().place(x=10, y=100, width=600, height=400)
+    canvas.draw()
+
+    root.update()
+    start_button = ttk.Button(root, text="Start", command=lambda: plot_start())
     start_button.grid(column=3, row=20)
-    pause_button = ttk.Button(root, text="Pause")  # change command
+    pause_button = ttk.Button(root, text="Pause", command=lambda: plot_stop())
     pause_button.grid(column=4, row=20)
 
-    # root.after(3000, data_refresh)
+    # initialize serial port
+    s = sr.Serial('/dev/cu.URT2', 115200)
+    s.reset_input_buffer()
+
+    # root.after(1, plot_data())
     root.mainloop()
 
 
