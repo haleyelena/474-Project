@@ -4,11 +4,13 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import numpy as np
 import serial as sr
+import pygame
 import time
 
 # global variables
 data = np.array([])
 cond = False
+selected_song = ""
 
 
 def design_window():
@@ -72,11 +74,14 @@ def design_window():
         title5.grid(column=35, row=100, columnspan=2, sticky='w')
         bpm = ttk.Entry(top)
         bpm.grid(column=40, row=100)
-        songs = tk.StringVar()
-        song = ttk.Combobox(top, textvariable=songs)
-        song["values"] = ["Happy Birthday", "Don't Stop Believin",
-                          "Bohemian Rhapsody"]
+        # songs = tk.StringVar()
+        # song = ttk.Combobox(top, textvariable=songs)
+        # song["values"] = ["Happy Birthday", "Don't Stop Believin",
+                         # "Bohemian Rhapsody"]
+        song = ttk.Button(top, text="Choose Song", command=add_song)
         song.grid(column=10, row=100)
+        c_song = ttk.Label(top, text=selected_song)
+        c_song.grid(column=20, row=100, columnspan=2, sticky='w')
         title7 = ttk.Label(top, text="Weight:")
         title7.grid(column=0, row=210, columnspan=2, sticky='w')
         weight = ttk.Entry(top)
@@ -171,11 +176,23 @@ def design_window():
         global cond
         cond = False
 
+    def add_song():
+        global selected_song
+        song = tk.filedialog.askopenfilename(
+            initialdir='/Users/haley/Desktop/test/', title='Choose a Song',
+            filetypes=(('mp3 Files', "*.mp3"),))
+
+        song.replace("/Users/haley/Desktop/test", "")
+        song.replace(".mp3", "")
+        selected_song = song
+
     # initialize gui main window
     root = tk.Tk()
     root.title("Mock Patient Interface")
     root.configure(background='light blue')
     root.geometry("1200x800")
+
+    pygame.mixer.init()
 
     top_label = ttk.Label(root, text="Welcome!")
     top_label.grid(column=0, row=0, columnspan=2, sticky='w')
@@ -225,7 +242,6 @@ def design_window():
     s = sr.Serial('/dev/cu.URT2', 115200)
     s.reset_input_buffer()
 
-    # root.after(1, plot_data())
     root.mainloop()
 
 
