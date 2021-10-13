@@ -182,8 +182,9 @@ def design_window():
             initialdir='/Users/haley/Desktop/test/', title='Choose a Song',
             filetypes=(('mp3 Files', "*.mp3"),))
 
-        song.replace("/Users/haley/Desktop/test", "")
-        song.replace(".mp3", "")
+        song = song.replace('/Users/haley/Desktop/test/', '')
+        song = song.replace('.mp3', '')
+        print(song)
         selected_song = song
 
     # initialize gui main window
