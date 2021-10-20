@@ -45,7 +45,7 @@ def design_window():
         # this will be where ok button of menu updates preferences
         return
 
-    def open_popup():
+    def open_menu():
         # this is menu popup
         top = tk.Toplevel(root)
         top.geometry("1000x400")
@@ -98,14 +98,16 @@ def design_window():
         title10.grid(column=0, row=300, columnspan=2, sticky='w')
         title11 = ttk.Label(top, text="Great Exhale Threshold:")
         title11.grid(column=0, row=310, columnspan=2, sticky='w')
-        units1 = ttk.Label(top, text="mL/kg")
-        units1.grid(column=15, row=300, columnspan=2, sticky='w')
-        units2 = ttk.Label(top, text="mL/kg")
-        units2.grid(column=15, row=310, columnspan=2, sticky='w')
-        inhale = ttk.Entry(top)
-        inhale.grid(column=10, row=300, columnspan=2)
-        exhale = ttk.Entry(top)
-        exhale.grid(column=10, row=310, columnspan=2)
+        # units1 = ttk.Label(top, text="mL/kg")
+        # units1.grid(column=15, row=300, columnspan=2, sticky='w')
+        # units2 = ttk.Label(top, text="mL/kg")
+        # units2.grid(column=15, row=310, columnspan=2, sticky='w')
+        inhale = ttk.Combobox(top)
+        inhale["values"] = ["High", "Medium", "Low"]
+        inhale.grid(column=10, row=300)
+        exhale = ttk.Combobox(top)
+        exhale["values"] = ["High", "Medium", "Low"]
+        exhale.grid(column=10, row=310)
         update_button = ttk.Button(top, text="Update", command=ok_command())
         update_button.grid(column=40, row=350)
 
@@ -187,6 +189,14 @@ def design_window():
         print(song)
         selected_song = song
 
+    def play():
+        song = f"/Users/haley/Desktop/test/{selected_song}.mp3"
+        pygame.mixer.music.load(song)
+        pygame.mixer.music.play(loops=0)
+
+    def stop():
+        pygame.mixer.music.stop()
+
     # initialize gui main window
     root = tk.Tk()
     root.title("Mock Patient Interface")
@@ -212,12 +222,16 @@ def design_window():
     cancel_button = ttk.Button(root, text="Cancel",
                                command=cancel_command)
     cancel_button.grid(column=6, row=20)
-    menu_button = ttk.Button(root, text="Menu", command=open_popup)
+    menu_button = ttk.Button(root, text="Menu", command=open_menu)
     menu_button.grid(column=2, row=20)
     # start_button = ttk.Button(root, text="Start")  # change command
     # start_button.grid(column=3, row=20)
     # pause_button = ttk.Button(root, text="Pause")  # change command
     # pause_button.grid(column=4, row=20)
+    ttk.Label(root, text="Current Song:").grid(column=0, row=25)
+    # selected_song = tk.StringVar()
+    current_song = ttk.Label(root, text=selected_song)
+    current_song.grid(column=1, row=25)
 
     fig = Figure()
     ax = fig.add_subplot(111)
@@ -234,9 +248,11 @@ def design_window():
     canvas.draw()
 
     root.update()
-    start_button = ttk.Button(root, text="Start", command=lambda: plot_start())
+    start_button = ttk.Button(root, text="Start", command=lambda: [
+        plot_start(), play()])
     start_button.grid(column=3, row=20)
-    pause_button = ttk.Button(root, text="Pause", command=lambda: plot_stop())
+    pause_button = ttk.Button(root, text="Pause", command=lambda: [
+        plot_stop(), stop()])
     pause_button.grid(column=4, row=20)
 
     # initialize serial port
