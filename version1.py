@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+from matplotlib.animation import FuncAnimation
+import matplotlib.pyplot as plt
+import pandas as pd
 import numpy as np
 import serial as sr
 import pygame
@@ -11,6 +14,7 @@ import time
 data = np.array([])
 cond = False
 selected_song = ""
+
 
 
 def design_window():
@@ -197,6 +201,9 @@ def design_window():
     def stop():
         pygame.mixer.music.stop()
 
+    def pause():
+        pygame.mixer.music.pause()
+
     # initialize gui main window
     root = tk.Tk()
     root.title("Mock Patient Interface")
@@ -239,9 +246,28 @@ def design_window():
     ax.set_title('Fake Plot')
     ax.set_xlabel('Time')
     ax.set_ylabel('Volume in Lungs (mL/kg)')
-    ax.set_xlim(0, 100)
+    ax.set_xlim(0, 50)
     ax.set_ylim(0, 6)
     lines = ax.plot([], [])[0]
+    # loading csv data that is synched with when to breath in/out
+    df = pd.read_csv('testdata.csv', header=None)
+    h = df.to_numpy()
+    times = h[:, 0]
+    t = []
+    beat = h[:, 1]
+    b = []
+    color = h[:, 2]
+    c = []
+    # ax.scatter(time, beat, c=color)
+
+    def animate(i):
+        for i in range(len(times)):
+            t.append(times[i])
+            b.append(beat[i])
+            c.append(color[i])
+            ax.scatter(t, b, c=c)
+
+    ani = FuncAnimation(fig, animate, frames=67, interval=10000)
 
     canvas = FigureCanvasTkAgg(fig, master=root)
     canvas.get_tk_widget().place(x=10, y=100, width=600, height=400)
@@ -252,7 +278,7 @@ def design_window():
         plot_start(), play()])
     start_button.grid(column=3, row=20)
     pause_button = ttk.Button(root, text="Pause", command=lambda: [
-        plot_stop(), stop()])
+        plot_stop(), pause()])
     pause_button.grid(column=4, row=20)
 
     # initialize serial port
