@@ -14,6 +14,7 @@ selected_song = ""
 
 
 def design_window():
+    
     def cancel_command():
         """H Function to control cancel button
 
@@ -162,10 +163,10 @@ def design_window():
             else:
                 data[0:99] = data[1:100]
                 data[99] = float(a[0:4])
-            lines.set_xdata(np.arrange(0, len(data)))
+            lines.set_xdata(np.arange(0, len(data)))
             lines.set_ydata(data)
             canvas.draw()
-        root.after(1, plot_data())
+        root.after(1, plot_data)
 
     def plot_start():
         global cond
@@ -230,19 +231,25 @@ def design_window():
     lines = ax.plot([], [])[0]
 
     canvas = FigureCanvasTkAgg(fig, master=root)
-    canvas.get_tk_widget().place(x=10, y=100, width=600, height=400)
+    canvas.get_tk_widget().place(x=10, y=100, width=500, height=400)
     canvas.draw()
 
     root.update()
     start_button = ttk.Button(root, text="Start", command=lambda: plot_start())
+    # start_button.place(x=100, y=450)
     start_button.grid(column=3, row=20)
+
+    root.update()
     pause_button = ttk.Button(root, text="Pause", command=lambda: plot_stop())
+    # pause_button.place(x= start_button.winfo_x()+start_button.winfo_reqwidth()+20, y=450)
     pause_button.grid(column=4, row=20)
 
     # initialize serial port
-    s = sr.Serial('/dev/cu.URT2', 115200)
+    s = sr.Serial('/dev/cu.usbmodem142101', 9600)
     s.reset_input_buffer()
 
+
+    root.after(1, plot_data)
     root.mainloop()
 
 
