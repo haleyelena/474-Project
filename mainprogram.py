@@ -16,6 +16,9 @@ cond = False
 cond2 = False
 selected_song = ""
 f = ("Times bold", 14)
+xmin = 0
+xmax = 10
+x = 0
 
 
 def add_song():
@@ -31,7 +34,7 @@ def add_song():
 
 
 def program_screen():
-    global data, cond, cond2, selected_song, f
+    global data, cond, cond2, selected_song, f, xmin, xmax, x
 
     def cancel_command():
         """H Function to control cancel button
@@ -135,21 +138,13 @@ def program_screen():
 
     top_label = ttk.Label(top, text="Welcome!")
     top_label.grid(column=0, row=0, columnspan=2, sticky='w')
-
-    ttk.Label(top, text="Pick Patient Name:").grid(column=0, row=1)
-    patient_ids = tk.StringVar()
-    patient = ttk.Combobox(top, textvariable=patient_ids)
-    patient.grid(column=1, row=1)
-    test = ["haley", "rachel", "phoebe", "claire"]
-    patient["values"] = test
-    ttk.Label(top, text="Click Menu to enter preferences, "
-                     "then Start to begin session!").grid(column=0, row=20)
+    ttk.Label(top, text="Click Menu to return to entering preferences, "
+                     "or Start to begin session!").grid(column=0, row=20)
 
     end_button = ttk.Button(top, text="End Session", command=lambda: [
         open_popup2(), stop()])
     end_button.grid(column=5, row=20)
-    cancel_button = ttk.Button(top, text="Cancel",
-                           command=cancel_command)
+    cancel_button = ttk.Button(top, text="Cancel", command=cancel_command)
     cancel_button.grid(column=6, row=20)
     menu_button = ttk.Button(top, text="Menu", command=top.destroy)
     menu_button.grid(column=2, row=20)
@@ -166,11 +161,11 @@ def program_screen():
     ax.set_xlabel('Time')
     ax.set_ylabel('Volume in Lungs (mL/kg)')
     ax.set_xlim(0, 50)
-    ax.set_ylim(0, 6)
+    ax.set_ylim(-10, 10)
     lines = ax.plot([], [])[0]
 
     canvas = FigureCanvasTkAgg(fig, master=top)
-    canvas.get_tk_widget().place(x=10, y=100, width=600, height=400)
+    canvas.get_tk_widget().place(x=10, y=70, width=1000, height=525)
     canvas.draw()
 
     # second plot for breathing instructions created
@@ -178,11 +173,11 @@ def program_screen():
     ax2 = fig2.add_subplot(111)
     ax2.set_title('Breathing Instructions')
     ax2.set_xlabel('Time')
-    ax2.set_xlim(0, 50)
+    ax2.set_xlim(0, 10)
     ax2.get_yaxis().set_visible(False)
 
     canvas2 = FigureCanvasTkAgg(fig2, master=top)
-    canvas2.get_tk_widget().place(x=10, y=550, width=600, height=200)
+    canvas2.get_tk_widget().place(x=10, y=600, width=1000, height=200)
     canvas2.draw()
 
     # loading csv data that is synched with when to breath in/out
@@ -194,37 +189,49 @@ def program_screen():
     b = []
     color = h[:, 2]
     c = []
-
+    # scat = ax2.scatter(t, b, c=c, s=200)
 
     def animate(i):
-        global cond2
+        global cond2, x
 
         if cond2:
             # for i in range(len(times)):
+            # x += 1
             t.append(times[i])
             b.append(beat[i])
             c.append(color[i])
-            ax2.scatter(t, b, c=c)
 
+            ax2.scatter(t, b, c=c, s=200)
+            # need to have shifting x axis
+            # scat.set_data(t, b)
+            # x2 = np.meshgrid(t, b)
+            # scat.set_offsets(x2)
+            # scat.set_array(c)
+
+            # if x >= xmax - 1.00:
+                # scat.axes.set_xlim(x - xmax + 1.0, x + 1.0)
+
+            # return scat
             # canvas2.draw()
 
     ani = FuncAnimation(fig2, animate, frames=68, interval=1000, blit=False)
 
     top.update()
     start_button = ttk.Button(top, text="Start", command=lambda: [
-        plot_start2(), play()])
+        plot_start2(), plot_start(), play()])
     start_button.grid(column=3, row=20)
 
     top.update()
     pause_button = ttk.Button(top, text="Pause", command=lambda: [
-        plot_stop(), pause()])
+         plot_stop(), pause()])
     pause_button.grid(column=4, row=20)
 
     # initialize serial port
-    s = sr.Serial('/dev/cu.URT2', 9600)
+    s = sr.Serial('/dev/cu.usbmodem144101', 9600)
     s.reset_input_buffer()
 
     top.after(1, plot_data)
+    top.mainloop()
 
 
 # initialize gui main window --MENU
