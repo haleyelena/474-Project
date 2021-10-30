@@ -19,6 +19,16 @@ f = ("Times bold", 14)
 xmin = 0
 xmax = 10
 x = 0
+threshold_hi = 0
+threshold_low = 0
+hi_thresh = np.empty(100)
+low_thresh = np.empty(100)
+good_in = 0
+above = False
+good_out = 0
+below = False
+good_in_message = ""
+good_out_message = ""
 
 
 def add_song():
@@ -34,7 +44,9 @@ def add_song():
 
 
 def program_screen():
-    global data, cond, cond2, selected_song, f, xmin, xmax, x
+    global data, cond, cond2, selected_song, f, xmin, xmax, x, threshold_hi, \
+        threshold_low, low_thresh, hi_thresh, good_in, good_out, above, below, \
+        good_in_message, good_out_message
 
     def cancel_command():
         """H Function to control cancel button
@@ -89,19 +101,45 @@ def program_screen():
         send_button.grid(column=51, row=60)
 
     def plot_data():
-        global cond, data
+        global cond, data, good_in_message, good_in, hi_thresh, low_thresh, \
+            above, below, good_out, good_out_message
 
         if cond:
             a = s.readline()
             a.decode()
             if len(data) < 100:
                 data = np.append(data, float(a[0:4]))
+                if data[-1] > hi_thresh & data[-2] < hi_thresh:
+                    above = True
+                    below = False
+                elif data[-1] < low_thresh & data[-2] > low_thresh:
+                    below = True
+                    above = False
+                else:
+                    above = False
+                    below = False
             else:
                 data[0:99] = data[1:100]
                 data[99] = float(a[0:4])
+                if data[-1] > hi_thresh & data[-2] < hi_thresh:
+                    above = True
+                elif data[-1] < low_thresh & data[-2] > low_thresh:
+                    below = True
+                    above = False
+                else:
+                    above = False
+                    below = False
             lines.set_xdata(np.arange(0, len(data)))
             lines.set_ydata(data)
             canvas.draw()
+            if above is True:
+                good_in += 1
+                good_in_message = "GREAT INHALE!"
+                good_job.config(text=good_in_message)
+            elif below is True:
+                good_out += 1
+                good_out_message = "GREAT EXHALE!"
+                good_job.config(text=good_out_message)
         root.after(1, plot_data)
 
     def plot_start():
@@ -152,6 +190,7 @@ def program_screen():
     # selected_song = tk.StringVar()
     current_song = ttk.Label(top, text=selected_song)
     current_song.grid(column=1, row=25)
+    good_job = ttk.Label(top, text="")
 
     # initial plot figure created
     fig = Figure()
@@ -163,6 +202,13 @@ def program_screen():
     ax.set_xlim(0, 50)
     ax.set_ylim(-10, 10)
     lines = ax.plot([], [])[0]
+    xs = range(100)
+    threshold_hi = inhale.get()
+    threshold_low = exhale.get()
+    hi_thresh.fill(threshold_hi)
+    low_thresh.fill(threshold_low)
+    upper_line = ax.plot(xs, hi_thresh, color="b")
+    lower_line = ax.plot(xs, low_thresh, color="b")
 
     canvas = FigureCanvasTkAgg(fig, master=top)
     canvas.get_tk_widget().place(x=10, y=70, width=1000, height=525)
@@ -289,10 +335,10 @@ title10.grid(column=0, row=300, columnspan=2, sticky='w')
 title11 = ttk.Label(root, text="Great Exhale Threshold:")
 title11.grid(column=0, row=310, columnspan=2, sticky='w')
 inhale = ttk.Combobox(root)
-inhale["values"] = ["High", "Medium", "Low"]
+inhale["values"] = [1, 2, 3, 4, 5]
 inhale.grid(column=10, row=300)
 exhale = ttk.Combobox(root)
-exhale["values"] = ["High", "Medium", "Low"]
+exhale["values"] = [-1, -2, -3, -4, -5]
 exhale.grid(column=10, row=310)
 update_button = ttk.Button(root, text="Next", command=program_screen)
 update_button.grid(column=40, row=350)
