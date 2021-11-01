@@ -235,36 +235,48 @@ def program_screen():
     b = []
     color = h[:, 2]
     c = []
-    # scat = ax2.scatter(t, b, c=c, s=200)
+    scat = ax2.scatter(t, b, c=c, s=200)
 
     def animate(i):
         global cond2, x
 
         if cond2:
             # for i in range(len(times)):
-            # x += 1
-            t.append(times[i])
-            b.append(beat[i])
-            c.append(color[i])
-
-            ax2.scatter(t, b, c=c, s=200)
+            x += 1
+            if len(t) < 10:
+                t.append(times[i])
+                b.append(beat[i])
+                c.append(color[i])
+            else:
+                t[0:9] = t[1:10]
+                t[9] = times[i]
+                b[0:9] = b[1:10]
+                b[9] = beat[i]
+                c[0:9] = c[1:10]
+                c[9] = color[i]
+            # scat.set_xdata(np.arange(0, len(t)))
+            # scat.set_ydata(b)
+            # canvas2.draw()
+            # top.after(1, animate)
+            # ax2.scatter(t, b, c=c, s=200)
             # need to have shifting x axis
             # scat.set_data(t, b)
             # x2 = np.meshgrid(t, b)
             # scat.set_offsets(x2)
             # scat.set_array(c)
 
-            # if x >= xmax - 1.00:
-                # scat.axes.set_xlim(x - xmax + 1.0, x + 1.0)
+            if x >= xmax - 1.00:
+               scat.axes.set_xlim(x - xmax + 1.0, x + 1.0)
 
+            ax2.scatter(t, b, c=c, s=200)
             # return scat
             # canvas2.draw()
 
-    ani = FuncAnimation(fig2, animate, frames=68, interval=1000, blit=False)
+    ani = FuncAnimation(fig2, animate, frames=64, interval=1000, blit=False)
 
     top.update()
     start_button = ttk.Button(top, text="Start", command=lambda: [
-        plot_start2(), plot_start(), play()])
+        plot_start2()]) # , plot_start(), play()])
     start_button.grid(column=3, row=20)
 
     top.update()
@@ -276,6 +288,7 @@ def program_screen():
     s = sr.Serial('/dev/cu.usbmodem144101', 9600)
     s.reset_input_buffer()
 
+    # top.after(1, animate)
     top.after(1, plot_data)
     top.mainloop()
 
