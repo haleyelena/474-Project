@@ -27,8 +27,8 @@ x = 0
 x2 = 0
 threshold_hi = 0
 threshold_low = 0
-hi_thresh = np.empty(100)
-low_thresh = np.empty(100)
+hi_thresh = np.empty(300)
+low_thresh = np.empty(300)
 good_in = 0
 above = False
 good_out = 0
@@ -140,7 +140,7 @@ def program_screen():
             a.decode()
             x2 += 1
             # a = read_serial()
-            if len(data) < 100:
+            if len(data) < 300:
                 data = np.append(data, float(a[0:4]))
                 if len(data) > 2:
                     if (float(data[-1]) > float(threshold_hi)) & (
@@ -155,15 +155,15 @@ def program_screen():
                         above = False
                         below = False
             else:
-                data[0:99] = data[1:100]
-                data[99] = float(a[0:4])
+                data[0:299] = data[1:300]
+                data[299] = float(a[0:4])
                 if len(data) > 2:
-                    if (float(data[-1]) > threshold_hi) & (
-                            float(data[-2]) < threshold_hi):
+                    if (float(data[-1]) > float(threshold_hi)) & (
+                            float(data[-2]) < float(threshold_hi)):
                         above = True
                         below = False
-                    elif (float(data[-1]) < threshold_low) & (
-                            float(data[-2]) > threshold_low):
+                    elif (float(data[-1]) < float(threshold_low)) & (
+                            float(data[-2]) > float(threshold_low)):
                         below = True
                         above = False
                     else:
@@ -226,9 +226,9 @@ def program_screen():
     top_label.grid(column=0, row=0, columnspan=2, sticky='w')
     ttk.Label(top, text="Click Menu to return to entering preferences, "
                         "or Start to begin session!").grid(column=0, row=20)
-
+    top.update()
     end_button = ttk.Button(top, text="End Session", command=lambda: [
-        open_popup2(), stop()])
+        open_popup2(), stop(), plot_stop()])
     end_button.grid(column=5, row=20)
     cancel_button = ttk.Button(top, text="Cancel", command=cancel_command)
     cancel_button.grid(column=6, row=20)
@@ -251,7 +251,7 @@ def program_screen():
     ax.set_xlim(0, 50)
     ax.set_ylim(-10, 10)
     lines = ax.plot([], [])[0]
-    xs = range(100)
+    xs = range(300)
     threshold_hi = inhale.get()
     threshold_low = exhale.get()
     r_level = level.get()
@@ -335,7 +335,7 @@ def program_screen():
     pause_button.grid(column=4, row=20)
 
     # initialize serial port
-    s = sr.Serial('/dev/cu.usbmodem146101', 9600)
+    s = sr.Serial('/dev/cu.usbmodem144101', 9600)
     s.reset_input_buffer()
 
     # top.after(1, animate)
