@@ -30,7 +30,9 @@ def listen():
     elif output == "700\r\n":
         text = "Calibration is complete. Press Next."
     testing.config(text=text)
+    root.update()
     root.after(1, listen)
+
 
 
 Label(
@@ -55,7 +57,7 @@ Button(
 
 
 # initialize serial port
-s = sr.Serial('/dev/cu.usbmodem144101', 9600)
+s = sr.Serial('/dev/cu.usbmodem146101', 9600)
 s.reset_input_buffer()
 
 
