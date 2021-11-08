@@ -1,11 +1,11 @@
 from tkinter import *
 
 root = Tk()
-root.geometry('400x300')
+root.geometry('800x800')
 root.title('Rythmic Auditory Device')
 root['bg'] = '#5d8a82'
 
-f = ("Times bold", 14)
+f = ("Times bold", 54)
 
 
 def next_page():
