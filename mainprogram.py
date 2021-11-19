@@ -205,6 +205,10 @@ def program_screen():
         global cond
         cond = False
 
+    def plot_stop2():
+        global cond2
+        cond2 = False
+
     def play():
         song = f"/Users/haley/Desktop/test/{selected_song}.mp3"
         pygame.mixer.music.load(song)
@@ -232,7 +236,7 @@ def program_screen():
     top.update()
     end_button = ttk.Button(top, text="End Session", style='my.TButton',
                             command=lambda: [open_popup2(), stop(),
-                                             plot_stop()])
+                                             plot_stop(), plot_stop2()])
     end_button.grid(column=5, row=20)
     cancel_button = ttk.Button(top, text="Cancel", style='my.TButton', command=cancel_command)
     cancel_button.grid(column=6, row=20)
@@ -243,7 +247,7 @@ def program_screen():
     current_song = ttk.Label(top, text=selected_song, font="Times 15")
     current_song.grid(column=1, row=25)
     good_job = ttk.Label(top, text="", font=f)
-    good_job.grid(column=10, row=25)
+    good_job.grid(column=5, row=25)
 
     # initial plot figure created
     fig = Figure()
@@ -327,24 +331,39 @@ def program_screen():
             # canvas2.draw()
 
     ani = FuncAnimation(fig2, animate, frames=255, interval=1000, blit=False)
+    canvas2.draw()
 
     top.update()
     start_button = ttk.Button(top, text="Start", style='my.TButton', command=lambda: [
-        plot_start2(), plot_start(), play()])
+        plot_start2(), play(), plot_start()])
     start_button.grid(column=3, row=20)
 
     top.update()
     pause_button = ttk.Button(top, text="Pause", style='my.TButton', command=lambda: [
-        plot_stop(), pause()])
+        plot_stop(), plot_stop2(), pause()])
     pause_button.grid(column=4, row=20)
 
     # initialize serial port
-    s = sr.Serial('/dev/cu.usbmodem144101', 9600)
+    s = sr.Serial('/dev/cu.usbmodem143101', 9600)
     s.reset_input_buffer()
 
     # top.after(1, animate)
     top.after(1, plot_data)
     top.mainloop()
+
+def warning():
+    warning = tk.Toplevel(root)
+    warning.geometry("1000x100")
+    warning.title("WAIT")
+    title1 = ttk.Label(warning, text="DID YOU CHOOSE A RESITANCE LEVEL FOR "
+                                     "THIS SESSION?", font='Mistral 28 bold')
+    title1.grid(column=0, row=0, columnspan=2, sticky='w')
+    no_button = ttk.Button(warning, text="NO", style='my.TButton',
+                             command=warning.destroy)
+    no_button.grid(column=0, row=50)
+    yes_button = ttk.Button(warning, text="YES", style='my.TButton',
+                             command=program_screen)
+    yes_button.grid(column=50, row=50)
 
 
 # initialize gui main window --MENU
@@ -410,7 +429,7 @@ exhale = ttk.Combobox(root)
 exhale["values"] = [-1, -2, -3, -4, -5]
 exhale.grid(column=10, row=310)
 update_button = ttk.Button(root, text="Next", style='my.TButton',
-                           command=program_screen)
+                           command=warning)
 update_button.grid(column=40, row=350)
 cancel = ttk.Button(root, text="END PROGRAM", style='my.TButton',
                     command=root.destroy)
