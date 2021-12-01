@@ -344,7 +344,7 @@ def program_screen():
     pause_button.grid(column=4, row=20)
 
     # initialize serial port
-    s = sr.Serial('/dev/cu.usbmodem143101', 9600)
+    s = sr.Serial('/dev/cu.usbmodem146101', 9600)
     s.reset_input_buffer()
 
     # top.after(1, animate)
