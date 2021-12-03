@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+
+from matplotlib import patches
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from matplotlib.animation import FuncAnimation
@@ -55,7 +57,7 @@ def add_song():
 def program_screen():
     global data, cond, cond2, selected_song, f, xmin, xmax, x, threshold_hi, \
         threshold_low, low_thresh, hi_thresh, good_in, good_out, above, below, \
-        good_in_message, good_out_message
+        good_in_message, good_out_message, interval
 
     def cancel_command():
         """H Function to control cancel button
@@ -253,7 +255,7 @@ def program_screen():
     fig = Figure()
     ax = fig.add_subplot(111)
 
-    ax.set_title('Fake Plot')
+    ax.set_title('Breath Visualization')
     ax.set_xlabel('Time')
     ax.set_ylabel('Volume in Lungs (mL/kg)')
     ax.set_xlim(0, 50)
@@ -294,6 +296,11 @@ def program_screen():
     color = h[:, 2]
     c = []
     scat = ax2.scatter(t, b, c=c, s=200)
+    interval = 100
+    if selected_song == "icanfly":
+        interval = 1000
+    elif selected_song == "billiejean":
+        interval = 500
 
     def animate(i):
         global cond2, x
@@ -327,10 +334,14 @@ def program_screen():
                 scat.axes.set_xlim(x - xmax + 1.0, x + 1.0)
 
             ax2.scatter(t, b, c=c, s=200)
+            ax2.add_patch(patches.Rectangle(
+                    xy=(x-1, 2),  # point of origin.
+                    width=2, height=2, linewidth=1,
+                    color='red', fill=False))
             # return scat
             # canvas2.draw()
-
-    ani = FuncAnimation(fig2, animate, frames=255, interval=1000, blit=False)
+    # top.update()
+    ani = FuncAnimation(fig2, animate, frames=255, interval=interval, blit=False)
     canvas2.draw()
 
     top.update()
@@ -350,6 +361,7 @@ def program_screen():
     # top.after(1, animate)
     top.after(1, plot_data)
     top.mainloop()
+
 
 def warning():
     warning = tk.Toplevel(root)

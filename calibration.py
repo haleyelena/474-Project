@@ -7,7 +7,7 @@ selected_song = ""
 
 root = Tk()
 root.geometry('800x800')
-root.title('Rythmic Auditory Device')
+root.title('Rhythmic Auditory Device')
 root['bg'] = '#5d8a82'
 
 f = ("Times bold", 54)
