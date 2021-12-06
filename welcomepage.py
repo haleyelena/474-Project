@@ -9,6 +9,10 @@ f = ("Times bold", 54)
 
 
 def next_page():
+    """Go to next page of GUI
+
+    Function destroys current calibration page and moves on to next main page.
+    """
     root.destroy()
     import calibration
 

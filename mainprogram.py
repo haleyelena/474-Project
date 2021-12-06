@@ -13,6 +13,9 @@ import pygame
 import time
 from tkinter import filedialog
 import pickle
+import logging
+
+#logging.basicConfig(filename="server.log", filemode="w", level=logging.INFO)
 
 
 # global variables
@@ -131,11 +134,15 @@ def program_screen():
                                  command=top.destroy)
         restart_button.grid(column=51, row=60)
 
-    # def read_serial():
-    #     if cond:
-    #         a = s.readline()
-    #         a.decode()
-    #         return a
+    def read_serial():
+        global data
+        a = s.readline()
+        a.decode()
+        if len(data) < 300:
+            data = np.append(data, float(a[0:4]))
+        else:
+            data[0:299] = data[1:300]
+            data[299] = float(a[0:4])
 
     def plot_data():
         global cond, data, good_in_message, good_in, threshold_low, \
@@ -143,58 +150,37 @@ def program_screen():
             r_level, f
 
         if cond:
-            a = s.readline()
-            a.decode()
             x2 += 1
-            # a = read_serial()
-            if len(data) < 300:
-                data = np.append(data, float(a[0:4]))
-                if len(data) > 2:
-                    if (float(data[-1]) > float(threshold_hi)) & (
-                            float(data[-2]) < float(threshold_hi)):
-                        above = True
-                        below = False
-                    elif (float(data[-1]) < float(threshold_low)) & (
-                            float(data[-2]) > float(threshold_low)):
-                        below = True
-                        above = False
-                    else:
-                        above = False
-                        below = False
-            else:
-                data[0:299] = data[1:300]
-                data[299] = float(a[0:4])
-                if len(data) > 2:
-                    if (float(data[-1]) > float(threshold_hi)) & (
-                            float(data[-2]) < float(threshold_hi)):
-                        above = True
-                        below = False
-                    elif (float(data[-1]) < float(threshold_low)) & (
-                            float(data[-2]) > float(threshold_low)):
-                        below = True
-                        above = False
-                    else:
-                        above = False
-                        below = False
+            read_serial()
+            if len(data) > 2:
+                if float(data[-1]) > float(threshold_hi):
+                    above = True
+                    below = False
+                    if float(data[-2]) < float(threshold_hi):
+                        good_in += 1
+                elif float(data[-1]) < float(threshold_low):
+                    below = True
+                    above = False
+                    if float(data[-2]) > float(threshold_low):
+                        good_out += 1
+                else:
+                    above = False
+                    below = False
             lines.set_xdata(np.arange(0, len(data)))
             lines.set_ydata(data)
             if x2 >= x2max - 1.00:
                 lines.axes.set_xlim(x2 - x2max + 1.0, x2 + 1.0)
             canvas.draw()
             if above is True:
-                good_in += 1
                 good_in_message = "GREAT INHALE!"
                 good_job.config(text=good_in_message)
-                root.after(1000, root.update) # or just root.update
+                root.update()
             elif below is True:
-                good_out += 1
                 good_out_message = "GREAT EXHALE!"
                 good_job.config(text=good_out_message)
-                root.after(1000, root.update)  # or just root update
+                root.update()  # or just root update
             else:
                 good_job.config(text="")
-        # print(above)
-        # print(below)
         root.after(1, plot_data)
 
     def plot_start():
@@ -364,7 +350,7 @@ def program_screen():
 
     # initialize serial port
     # CHANGE S BASED ON CURRENT PORT
-    s = sr.Serial('/dev/cu.usbmodem144101', 9600)
+    s = sr.Serial('/dev/cu.usbmodem146101', 9600)
     s.reset_input_buffer()
 
     # top.after(1, animate)
@@ -433,7 +419,7 @@ title9 = ttk.Label(root, text="Resistance Level:", font=f)
 title9.grid(column=23, row=300, columnspan=2, sticky='w')
 levels = tk.StringVar()
 level = ttk.Combobox(root, textvariable=levels)
-level["values"] = [1, 2, 3, 4, 5, 6]
+level["values"] = [0, 1, 2, 3, 4, 5]
 level.grid(column=25, row=300)
 title10 = ttk.Label(root, text="Great Inhale Threshold:", font=f)
 title10.grid(column=0, row=300, columnspan=2, sticky='w')
