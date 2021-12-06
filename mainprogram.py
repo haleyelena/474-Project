@@ -15,7 +15,6 @@ from tkinter import filedialog
 import pickle
 
 
-
 # global variables
 data = np.array([])
 cond = False
@@ -39,19 +38,18 @@ good_in_message = ""
 good_out_message = ""
 r_level = 1
 
-# a = None
-
 
 def add_song():
     global selected_song
     song = tk.filedialog.askopenfilename(
         initialdir='/Users/haley/Desktop/test/', title='Choose a Song',
         filetypes=(('mp3 Files', "*.mp3"),))
-
     song = song.replace('/Users/haley/Desktop/test/', '')
     song = song.replace('.mp3', '')
     print(song)
     selected_song = song
+    c_song.config(text=selected_song)
+    root.update()
 
 
 def program_screen():
@@ -80,11 +78,14 @@ def program_screen():
         e = "# Great Exhales: "
         i2 = i + str(good_in) + "\n"
         e2 = e + str(good_out) + "\n"
+        len = "Desired Length of Breath (sec): "
+        len2 = len + str(breath_length.get()) + "\n"
         output_file = open(file, 'w')
         output_file.write(p2)
         output_file.write(r2)
         output_file.write(i2)
         output_file.write(e2)
+        output_file.write(len2)
         output_file.close()
 
     def open_popup2():
@@ -110,23 +111,25 @@ def program_screen():
         title6.grid(column=0, row=35, columnspan=2, sticky='w')
         title6a = ttk.Label(p2, text=r_level)
         title6a.grid(column=3, row=35, columnspan=2, sticky='w')
-        title11 = ttk.Label(p2, text="Share results with:",
-                            font='Mistral 25 bold')
-        title11.grid(column=0, row=40, columnspan=2, sticky='w')
-        email = ttk.Entry(p2)
-        email.grid(column=10, row=40, columnspan=2)
-        send_button = ttk.Button(p2, text="Send", style='my.TButton')  # change command
-        send_button.grid(column=20, row=40)
-        save_button = ttk.Button(p2,
-                                 text="Save results as...", style='my.TButton',
-                                 command=open_save)  # change command
+        title6c = ttk.Label(p2, text="Desired Length of Breath (sec) :", font=f)
+        title6c.grid(column=0, row=35, columnspan=2, sticky='w')
+        title6b = ttk.Label(p2, text=breath_length.get())
+        title6b.grid(column=3, row=35, columnspan=2, sticky='w')
+        # title11 = ttk.Label(p2, text="Share results with:", font='Mistral 25 bold')
+        # title11.grid(column=0, row=40, columnspan=2, sticky='w')
+        # email = ttk.Entry(p2)
+        # email.grid(column=10, row=40, columnspan=2)
+        # send_button = ttk.Button(p2, text="Send", style='my.TButton')  # change command
+        # send_button.grid(column=20, row=40)
+        save_button = ttk.Button(p2, text="Save results as...",
+                                 style='my.TButton', command=open_save)
         save_button.grid(column=0, row=50)
-        send_button = ttk.Button(p2, text="CANCEL", style='my.TButton',
+        cancel_button = ttk.Button(p2, text="CANCEL", style='my.TButton',
                                  command=p2.destroy)  # change command
-        send_button.grid(column=50, row=60)
-        send_button = ttk.Button(p2, text="RESTART", style='my.TButton',
+        cancel_button.grid(column=50, row=60)
+        restart_button = ttk.Button(p2, text="RESTART", style='my.TButton',
                                  command=top.destroy)
-        send_button.grid(column=51, row=60)
+        restart_button.grid(column=51, row=60)
 
     # def read_serial():
     #     if cond:
@@ -182,12 +185,12 @@ def program_screen():
                 good_in += 1
                 good_in_message = "GREAT INHALE!"
                 good_job.config(text=good_in_message)
-                root.update()
+                root.after(1000, root.update) # or just root.update
             elif below is True:
                 good_out += 1
                 good_out_message = "GREAT EXHALE!"
                 good_job.config(text=good_out_message)
-                root.update()  # need to make this slower but dont know how
+                root.after(1000, root.update)  # or just root update
             else:
                 good_job.config(text="")
         # print(above)
@@ -246,6 +249,7 @@ def program_screen():
     menu_button.grid(column=2, row=20)
     ttk.Label(top, text="Current Song:", font=f).grid(column=0, row=25)
     # selected_song = tk.StringVar()
+    root.update()
     current_song = ttk.Label(top, text=selected_song, font="Times 15")
     current_song.grid(column=1, row=25)
     good_job = ttk.Label(top, text="", font=f)
@@ -259,7 +263,7 @@ def program_screen():
     ax.set_xlabel('Time')
     ax.set_ylabel('Volume in Lungs (mL/kg)')
     ax.set_xlim(0, 50)
-    ax.set_ylim(-10, 10)
+    ax.set_ylim(-5, 5)
     lines = ax.plot([], [])[0]
     xs = range(300)
     threshold_hi = inhale.get()
@@ -335,9 +339,13 @@ def program_screen():
 
             ax2.scatter(t, b, c=c, s=200)
             ax2.add_patch(patches.Rectangle(
-                    xy=(x-1, 2),  # point of origin.
-                    width=2, height=2, linewidth=1,
+                    xy=(x-0.5, 2),  # point of origin.
+                    width=1, height=2, linewidth=1,
                     color='red', fill=False))
+            ax2.add_patch(patches.Rectangle(
+                xy=(x - 1.5, 2),  # point of origin.
+                width=1, height=2, linewidth=1,
+                color='white', fill=False))
             # return scat
             # canvas2.draw()
     # top.update()
@@ -355,7 +363,8 @@ def program_screen():
     pause_button.grid(column=4, row=20)
 
     # initialize serial port
-    s = sr.Serial('/dev/cu.usbmodem146101', 9600)
+    # CHANGE S BASED ON CURRENT PORT
+    s = sr.Serial('/dev/cu.usbmodem144101', 9600)
     s.reset_input_buffer()
 
     # top.after(1, animate)
@@ -374,7 +383,7 @@ def warning():
                              command=warning.destroy)
     no_button.grid(column=0, row=50)
     yes_button = ttk.Button(warning, text="YES", style='my.TButton',
-                             command=program_screen)
+                            command=program_screen)
     yes_button.grid(column=50, row=50)
 
 
@@ -392,9 +401,9 @@ title1.grid(column=0, row=0, columnspan=2, sticky='w')
 blue = ttk.Label(root, text="Blue = inhale", font=f)
 blue.grid(column=0, row=20, columnspan=2, sticky='w')
 green = ttk.Label(root, text="Green = exhale", font=f)
-green.grid(column=10, row=20, columnspan=2, sticky='w')
+green.grid(column=1, row=20, columnspan=2, sticky='w')
 brown = ttk.Label(root, text="Black = rest", font=f)
-brown.grid(column=20, row=20, columnspan=2, sticky='w')
+brown.grid(column=2, row=20, columnspan=2, sticky='w')
 line1 = ttk.Label(root, text="Go above the blue threshold to earn a "
                              "'GREAT INHALE!'", font=f)
 line1.grid(column=0, row=40, columnspan=2, sticky='w')
@@ -407,44 +416,40 @@ title3 = ttk.Label(root, text="User Specs", font='Mistral 28 bold')
 title3.grid(column=0, row=200, columnspan=2, sticky='w')
 title4 = ttk.Label(root, text="Song:", font=f)
 title4.grid(column=0, row=100, columnspan=2, sticky='w')
-title5 = ttk.Label(root, text="BPM:", font=f)
-title5.grid(column=35, row=100, columnspan=2, sticky='w')
-bpm = ttk.Entry(root)
-bpm.grid(column=40, row=100)
+title5 = ttk.Label(root, text="Desired Length of Breath (sec) :", font=f)
+title5.grid(column=23, row=100, columnspan=2, sticky='w')
+breath_length = ttk.Entry(root)
+breath_length.grid(column=25, row=100)
 title50 = ttk.Label(root, text="Patient Name:", font=f)
 title50.grid(column=0, row=210, columnspan=2, sticky='w')
 p_name = ttk.Entry(root)
 p_name.grid(column=1, row=210)
-# songs = tk.StringVar()
-# song = ttk.Combobox(top, textvariable=songs)
-# song["values"] = ["Happy Birthday", "Don't Stop Believin",
-# "Bohemian Rhapsody"]
 song = ttk.Button(root, text="Choose Song", style='my.TButton',
                   command=add_song)
-song.grid(column=10, row=100)
+song.grid(column=1, row=100)
 c_song = ttk.Label(root, text=selected_song)
-c_song.grid(column=20, row=100, columnspan=2, sticky='w')
+c_song.grid(column=2, row=100, columnspan=2, sticky='w')
 title9 = ttk.Label(root, text="Resistance Level:", font=f)
-title9.grid(column=35, row=300, columnspan=2, sticky='w')
+title9.grid(column=23, row=300, columnspan=2, sticky='w')
 levels = tk.StringVar()
 level = ttk.Combobox(root, textvariable=levels)
 level["values"] = [1, 2, 3, 4, 5, 6]
-level.grid(column=40, row=300)
+level.grid(column=25, row=300)
 title10 = ttk.Label(root, text="Great Inhale Threshold:", font=f)
 title10.grid(column=0, row=300, columnspan=2, sticky='w')
 title11 = ttk.Label(root, text="Great Exhale Threshold:", font=f)
 title11.grid(column=0, row=310, columnspan=2, sticky='w')
 inhale = ttk.Combobox(root)
-inhale["values"] = [1, 2, 3, 4, 5]
-inhale.grid(column=10, row=300)
+inhale["values"] = [1, 2, 3]
+inhale.grid(column=1, row=300)
 exhale = ttk.Combobox(root)
-exhale["values"] = [-1, -2, -3, -4, -5]
-exhale.grid(column=10, row=310)
+exhale["values"] = [-1, -2, -3]
+exhale.grid(column=1, row=310)
 update_button = ttk.Button(root, text="Next", style='my.TButton',
                            command=warning)
-update_button.grid(column=40, row=350)
+update_button.grid(column=25, row=350)
 cancel = ttk.Button(root, text="END PROGRAM", style='my.TButton',
                     command=root.destroy)
-cancel.grid(column=40, row=450)
+cancel.grid(column=25, row=450)
 
 root.mainloop()

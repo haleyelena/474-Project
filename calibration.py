@@ -70,7 +70,7 @@ Button(
 
 
 # initialize serial port
-s = sr.Serial('/dev/cu.usbmodem146101', 9600)
+s = sr.Serial('/dev/cu.usbmodem144101', 9600)  # CHANGE BASED ON CURRENT PORT
 s.reset_input_buffer()
 
 
