@@ -12,7 +12,7 @@ d1 = today.strftime("%d-%m-%Y")
 root = Tk()
 root.geometry('800x800')
 root.title('Rhythmic Auditory Device')
-root['bg'] = '#5d8a82'
+root.configure(background="#ececec")
 
 f = ("Times bold", 54)
 pygame.mixer.init()
@@ -96,11 +96,11 @@ Label(
     text="CALIBRATION",
     padx=20,
     pady=20,
-    bg='#5d8a82',
+    bg='#ffc0cb',
     font=f).pack(expand=True, fill=BOTH)
 
 
-testing = Label(root, text="Press the Button", padx=20, pady=20, bg='#5d8a82',
+testing = Label(root, text="Press the Button", padx=20, pady=20, bg='#ffc0cb',
                 font=f)
 testing.pack(expand=True, fill=BOTH)
 
@@ -113,7 +113,7 @@ Button(
 
 
 # initialize serial port
-s = sr.Serial('/dev/cu.usbmodem146101', 9600)  # CHANGE BASED ON CURRENT PORT
+s = sr.Serial('/dev/cu.usbmodem144101', 9600)  # CHANGE BASED ON CURRENT PORT
 s.reset_input_buffer()
 
 
