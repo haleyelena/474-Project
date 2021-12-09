@@ -12,7 +12,6 @@ import serial as sr
 import pygame
 import time
 from tkinter import filedialog
-import pickle
 import logging
 
 
@@ -50,6 +49,12 @@ end_time2 = 0
 
 
 def add_song():
+    """Function to choose song to play in gui
+
+    This function allows the user to pick a song from a specified folder on
+    users computer, in this case a test folder on the users Desktop. It then
+    sets this song name as the selected song global variable.
+    """
     global selected_song
     song = tk.filedialog.askopenfilename(
         initialdir='/Users/haley/Desktop/test/', title='Choose a Song',
@@ -83,6 +88,12 @@ def program_screen():
         return
 
     def open_save():
+        """Save function
+
+        Function writes a text file containing all of the summary metrics
+        displayed in the end session popup. The file is saved in the location
+        and to the name of the users choice.
+        """
         file = tk.filedialog.asksaveasfilename(filetypes=(('Text Document',
                                                            "*.txt"),))
         p = "Patient Name: "
@@ -123,7 +134,6 @@ def program_screen():
         p2 = tk.Toplevel(top)
         p2.geometry("1200x500")
         p2.configure(background="#ececec")
-        # p2['bg'] = '#ff60cb'
         p2.title("Session Ended")
         title1 = ttk.Label(p2, text="Summary", font='Mistral 28 bold')
         title1.grid(column=0, row=0, columnspan=1, sticky='w', pady=[10])
@@ -182,6 +192,15 @@ def program_screen():
         restart_button.grid(column=51, row=60)
 
     def average(list):
+        """Find the average of a list of floats.
+
+        Function takes the average of a list of floats and returns it with two
+        decimal places.
+
+        :param list: list of time durations of inhales or exhales
+
+        :return avg2: string of calculated average number with 2 decimal places
+        """
         sum = 0
         for x in list:
             sum += x
@@ -191,16 +210,32 @@ def program_screen():
             return avg2
 
     def read_serial():
+        """Listens to serial monitor for serial data instructions
+
+        Function listens to the serial monitor in order to receive wind-speeds
+        being sent from the arduino to the serial port.
+        """
         global data
         a = s.readline()
         a.decode()
-        if len(data) < 300:
+        if len(data) < 300:  # potentially unnecessary if/else statement
             data = np.append(data, float(a[0:4]))
         else:
             data[0:299] = data[1:300]
             data[299] = float(a[0:4])
 
     def plot_data():
+        """Displays and interprets wind-speed data
+
+        Function starts if a global variable cond is set to true and
+        initializes serial port data being received and displayed on the main
+        graph. Along with displaying the wind-speed from the arduino in real
+        time, the data is compared to the thresholds set by the user in the
+        menu page. If the data is above the top threshold, "GOOD INHALE" is
+        displayed, and if the data is below the bottom threshold, "GOOD EXHALE"
+        is displayed. A count of number of good inhales/exhales is also stored.
+        Additional, each good inhale and exhale is timed and stored.
+        """
         global cond, data, good_in_message, good_in, threshold_low, \
             threshold_hi, above, below, good_out, good_out_message, x2, \
             r_level, f, time_list_in, start_time, end_time, time_list_ex, \
@@ -247,7 +282,6 @@ def program_screen():
                 if start_time != 0:
                     if end_time != 0:
                         new_length_in = end_time - start_time
-                        # if new_length_in not in time_list_in:
                         time_list_in.append(new_length_in)
                         start_time = 0
                         end_time = 0
@@ -255,11 +289,9 @@ def program_screen():
                 if start_time2 != 0:
                     if end_time2 != 0:
                         new_length_ex = end_time2 - start_time2
-                        # if new_length_ex not in time_list_ex:
                         time_list_ex.append(new_length_ex)
                         start_time2 = 0
                         end_time2 = 0
-                        # print(new_length_ex)
         root.after(1, plot_data)
 
     def plot_start():
@@ -324,6 +356,7 @@ def program_screen():
         """
         pygame.mixer.music.pause()
 
+    # create main page
     top = tk.Toplevel(root)
     top.title("Patient Interface")
     # top['bg'] = '#ff60cb'
@@ -333,6 +366,7 @@ def program_screen():
     # initiate media player
     pygame.mixer.init()
 
+    # initiate main page gui labels
     top_label = ttk.Label(top, text="Welcome!", font=f)
     top_label.grid(column=0, row=0, columnspan=2, sticky='w')
     ttk.Label(top, text="Click Menu to return to entering preferences, or "
@@ -350,7 +384,6 @@ def program_screen():
                              command=top.destroy)
     menu_button.grid(column=2, row=20)
     ttk.Label(top, text="Current Song:", font=f).grid(column=0, row=25)
-    # selected_song = tk.StringVar()
     root.update()
     current_song = ttk.Label(top, text=selected_song, font="Times 15")
     current_song.grid(column=1, row=25)
@@ -484,7 +517,6 @@ def warning():
     warning = tk.Toplevel(root)
     warning.geometry("1000x100")
     warning.configure(background="#ececec")
-    # warning['bg'] = '#ffc0cb'
     warning.title("WAIT")
     title1 = ttk.Label(warning, text="DID YOU CHOOSE A RESITANCE LEVEL FOR "
                                      "THIS SESSION?", font='Mistral 28 bold')
@@ -500,7 +532,6 @@ def warning():
 # initialize gui main window --MENU
 root = tk.Tk()
 root.title("Rythmic Auditory Device")
-# root['bg'] = '#ffc0cb'
 root.configure(background="#ececec")
 root.geometry("1500x500")
 
