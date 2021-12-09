@@ -396,7 +396,7 @@ def program_screen():
 
     ax.set_title('Breath Visualization')
     ax.set_xlabel('Time')
-    ax.set_ylabel('Volume in Lungs (mL/kg)')
+    ax.set_ylabel('Relative Breath Speed')
     ax.set_xlim(0, 50)
     ax.set_ylim(-5, 5)
     lines = ax.plot([], [])[0]
