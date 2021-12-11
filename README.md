@@ -7,7 +7,7 @@ of neurological injury (TBI and stroke) or neurodegenerative conditions
 These patients normally struggle to comply to their breathing exercises as the
 current solutions are not entertaining, don’t have any feedback, and have no 
 aspects of entrainment. This repository contains all python code used to create 
-the computer side software for the device. This ReadMe serves as an instrucition
+the computer side software for the device. This ReadMe serves as an instruction
 manual for how to successfully use and download the software in its current state.
 
 ## Initial Software Setup Instructions
@@ -84,7 +84,7 @@ resistance level at this time.
 16. Press the cancel button to return to the menu page. 
 17. Press the pause button to pause the song and both moving graphs. 
 18. Press the End Session button if you wish to end the session. 
-19. This will take stop the song and moving graphs, and take you to a Summary
+19. This will stop the song and moving graphs, and take you to a Summary
 Metrics page. 
     1. This Summary page displays metrics describing your session.
 20. Press the Save As... button to open a popup to save a file of data containing
