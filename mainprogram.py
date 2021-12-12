@@ -67,6 +67,25 @@ def add_song():
     root.update()
 
 
+def average(list):
+    """Find the average of a list of floats.
+
+    Function takes the average of a list of floats and returns it with two
+    decimal places.
+
+    :param list: list of time durations of inhales or exhales
+
+    :return avg2: string of calculated average number with 2 decimal places
+    """
+    sum = 0
+    for x in list:
+        sum += x
+    if len(list) > 0:
+        avg = sum / len(list)
+        avg2 = "{:.2f}".format(avg)
+        return avg2
+
+
 def program_screen():
     """Main session page of GUI
 
@@ -190,24 +209,6 @@ def program_screen():
         restart_button = ttk.Button(p2, text="RESTART", style='my.TButton',
                                     command=top.destroy)
         restart_button.grid(column=51, row=60)
-
-    def average(list):
-        """Find the average of a list of floats.
-
-        Function takes the average of a list of floats and returns it with two
-        decimal places.
-
-        :param list: list of time durations of inhales or exhales
-
-        :return avg2: string of calculated average number with 2 decimal places
-        """
-        sum = 0
-        for x in list:
-            sum += x
-        if len(list) > 0:
-            avg = sum/len(list)
-            avg2 = "{:.2f}".format(avg)
-            return avg2
 
     def read_serial():
         """Listens to serial monitor for serial data instructions
