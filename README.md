@@ -23,7 +23,7 @@ the audio files necessary to use this program.
    2. Open `mainprogram.py` and go to line 60. Change the test folder location
     as needed to match where you have put the test folder containing the audio
        files. The current code is defaulted to `Users/haley/Desktop`, which is
-       where my test folder is located on my Mac. Repeat on lines 62 and 341. 
+       where my test folder is located on my Mac. Repeat on lines 62 and 342. 
 4. Correct serial port number in Calibration and Main Program scripts.
     1. Plug in the mechanical device to computer. Turn device on. Open arduino,
        click the "tools" drop-down, and click port in order to check the serial 
