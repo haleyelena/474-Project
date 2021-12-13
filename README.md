@@ -1,5 +1,5 @@
 # 474-Project: MedRhythms Auditory Device
-For the BME Design Fellows Program, my team created a breathing device that 
+For the BME Design Fellows Program, our team created a breathing device that 
 incorporated visual and auditory feedback in order to increase neurologic music 
 therapy treatment compliance for patients suffering from Dysarthria as a result
 of neurological injury (TBI and stroke) or neurodegenerative conditions 
@@ -94,12 +94,18 @@ your summary messages. You will be able to enter the name and location of the
 22. Press the restart button to return to the menu page.
 
 ## Arduino Code
-The Arduino Nano Every that is built into the breathing device already has an Arduino program installed. This code is in the `ArduinoCode` folder in this repository and is titled `ArduinoCode.ino`. There are likely no changes to be made to this code, unless the user wants to include more wind speed levels than the current number of levels, 3. If you want to change the number of levels, you can increase or decrease the `num_levels` variable.
+The Arduino Nano Every that is built into the breathing device already has an Arduino program installed. This code is in the `ArduinoCode` folder in this repository and is titled `ArduinoCode.ino`.
+
+The code includes a setup function, a loop function, and three other functions that carry out the measurements and calculations: measure, calibrate, and levels. The setup function initializes the Serial Monitor, the calibration button, and the calibration indicator LED. The loop calls all three measurement and calculation functions.
+
+The measure() function reads and converts wind speed and temperature from analog inputs from the hot wire anemometer. The calibrate() function first measures the ambient temperature and wind speed and then measures the patient's maximum inhale and exhale wind speeds in order to calibrate the device. Finally, the levels() functions takes in several inputs from the measure() and calibrate() functions to calculate the "level" of the patient's wind speed from 0 to 3.
+
+There are likely no changes to be made to this code, unless the user wants to include more wind speed levels than the current number of levels, 3. If you want to change the number of levels, you can increase or decrease the `num_levels` variable.
 
 ## License
 MIT License
 
-Copyright (c) 2021 Haley Elena Snyder
+Copyright (c) 2021 Haley Elena Snyder, Rachel Lopez, Phoebe Dijour
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -118,6 +124,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-       
-    
