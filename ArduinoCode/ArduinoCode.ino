@@ -103,8 +103,7 @@ float measure() {
 }
 
 float calibrate() {
-  /*
-     Measure the ambient temperature and windspeed and the patient's maximum inhale and exhale windspeeds.
+  /* Measure the ambient temperature and windspeed and the patient's maximum inhale and exhale windspeeds.
 
      This function is called when the calibration button is pressed on the device. Once the function begins,
      it outputs the wait_code to the Serial monitor, which is interpretted by the computer interface and
@@ -172,25 +171,24 @@ float calibrate() {
 }
 
 int levels(float avg_temp, float avg_speed, float avg_overall_max_out, float avg_overall_max_in) {
-  /*
-    Calculate the level of the patient's breath based on windspeed as compared to average and maximum
-    windspeeds
+  /* Calculate the level of the patient's breath based on windspeed as compared to average and maximum
+     windspeeds
 
-    This function measures the patient's current windspeed and temperature, and then sorts the breaths
-    into inhales or exhales. Inhales occur when the temperature of the breath is below the ambient
-    temperature, and exhales occur when the temperature of the breath is above the ambient temperature.
-    Once the breaths are sorted, the range of each of the five levels is determined by calculating
-    the difference between maximum windspeed and ambient windspeed and dividing by the number of levels,
-    5. Then, the specific level for the current breath is calculated by dividing the current speed by the
-    range previously calculated. If it is an inhale, the level is positive. If it is an exhale, the level
-    is negative. If there is no breath (the current windspeed is lower than the ambient speed), the level
-    is zero.
+     This function measures the patient's current windspeed and temperature, and then sorts the breaths
+     into inhales or exhales. Inhales occur when the temperature of the breath is below the ambient
+     temperature, and exhales occur when the temperature of the breath is above the ambient temperature.
+     Once the breaths are sorted, the range of each of the five levels is determined by calculating
+     the difference between maximum windspeed and ambient windspeed and dividing by the number of levels,
+     5. Then, the specific level for the current breath is calculated by dividing the current speed by the
+     range previously calculated. If it is an inhale, the level is positive. If it is an exhale, the level
+     is negative. If there is no breath (the current windspeed is lower than the ambient speed), the level
+     is zero.
 
-    :param avg_temp: float containing the ambient temperature in Celsius
-    :param avg_speed: float containing the ambient windspeed in miles per hour
-    :param avg_overal_max_out: float containing average maximum exhale windspeed
-    :param avg_overal_max_in: float containing average maximum inhale windspeed
-    :param num_levels: int containing the total number of levels (usually 5)
+     :param avg_temp: float containing the ambient temperature in Celsius
+     :param avg_speed: float containing the ambient windspeed in miles per hour
+     :param avg_overal_max_out: float containing average maximum exhale windspeed
+     :param avg_overal_max_in: float containing average maximum inhale windspeed
+     :param num_levels: int containing the total number of levels (usually 5)
   */
 
   float range_in = 1.0;
