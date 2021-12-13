@@ -93,6 +93,9 @@ your summary messages. You will be able to enter the name and location of the
 21. Press the cancel button to return to the main page. 
 22. Press the restart button to return to the menu page.
 
+## Arduino Code
+The Arduino Nano Every that is built into the breathing device already has an Arduino program installed. This code is in the `ArduinoCode` folder in this repository and is titled `ArduinoCode.ino`. There are likely no changes to be made to this code, unless the user wants to include more wind speed levels than the current number of levels, 3. If you want to change the number of levels, you can increase or decrease the `num_levels` variable.
+
 ## License
 MIT License
 
