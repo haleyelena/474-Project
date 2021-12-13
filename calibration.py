@@ -84,8 +84,8 @@ def listen():
         logging.info("User was instructed to Breath In as hard as they can")
     elif output == "700\r\n":
         text = "Calibration is complete. Press Next."
-        logging.info("Calibration is complete. User was instructed to continue "
-                     "to the next page of the program")
+        logging.info("Calibration is complete. User was instructed to "
+                     "continue to the next page of the program")
     testing.config(text=text)
     root.update()
     root.after(1, listen)

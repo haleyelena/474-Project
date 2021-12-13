@@ -15,7 +15,7 @@ from tkinter import filedialog
 import logging
 
 
-#logging.basicConfig(filename="server.log", filemode="w", level=logging.INFO)
+# logging.basicConfig(filename="server.log", filemode="w", level=logging.INFO)
 
 
 # global variables
@@ -185,7 +185,8 @@ def program_screen():
         title6.grid(column=0, row=44, columnspan=1, sticky='w')
         title6a = ttk.Label(p2, text=r_level)
         title6a.grid(column=3, row=44, columnspan=1, sticky='w')
-        title6c = ttk.Label(p2, text="Desired Length of Breath (sec) :", font=f)
+        title6c = ttk.Label(p2, text="Desired Length of Breath (sec) :",
+                            font=f)
         title6c.grid(column=0, row=42, columnspan=2, sticky='w')
         blength = breath_length.get()
         title6b = ttk.Label(p2, text=blength)
